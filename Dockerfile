@@ -1,11 +1,20 @@
-FROM python:3.8-buster
-ENV PYTHONBUFFERED=1
+FROM python:3.8
 
-WORKDIR /django
+ENV DockerHome=/home/apps/webapp
 
-COPY Pipfile Pipfile
-COPY Pipfile.lock Pipfile.lock
-RUN pip3 install pipenv && pipenv install
-COPY . .
-CMD python manage.py runserver
+RUN mkdir -p ${DockerHome}
+
+WORKDIR ${DockerHome}
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN pip install --upgrade pip
+
+COPY . ${DockerHome}
+
+RUN pip install -r requirements.txt
+
 EXPOSE 8000
+
+CMD python manage.py runserver
